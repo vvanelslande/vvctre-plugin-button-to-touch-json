@@ -26,8 +26,12 @@ static std::wstring CPToUTF16(std::uint32_t code_page, const std::string& input)
     return output;
 }
 
+namespace Common {
+
 std::wstring UTF8ToUTF16W(const std::string& input) {
     return CPToUTF16(CP_UTF8, input);
 }
+
+} // namespace Common
 
 #endif
