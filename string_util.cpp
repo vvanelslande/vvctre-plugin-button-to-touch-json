@@ -8,6 +8,8 @@
 #include <windows.h>
 #include "string_util.h"
 
+namespace Common {
+
 static std::wstring CPToUTF16(std::uint32_t code_page, const std::string& input) {
     const auto size =
         MultiByteToWideChar(code_page, 0, input.data(), static_cast<int>(input.size()), nullptr, 0);
@@ -25,8 +27,6 @@ static std::wstring CPToUTF16(std::uint32_t code_page, const std::string& input)
 
     return output;
 }
-
-namespace Common {
 
 std::wstring UTF8ToUTF16W(const std::string& input) {
     return CPToUTF16(CP_UTF8, input);
