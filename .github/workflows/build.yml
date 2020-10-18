@@ -20,15 +20,16 @@ jobs:
         with:
           submodules: recursive
       - uses: ilammy/msvc-dev-cmd@v1
-      - name: Build
+      - name: Configure CMake
         shell: bash
         run: |
           cd $GITHUB_WORKSPACE
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            cl.exe //LD //Fe:button-to-touch-json.dll plugin.cpp
-          else
-            g++ plugin.cpp -shared -o button-to-touch-json.so -fPIC
-          fi
+          mkdir build && cd build
+          cmake .. -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        working-directory: ./build
+        shell: bash
+        run: cmake --build . --config Release
       - name: Prepare to upload
         if: github.event_name == 'push'
         shell: bash
