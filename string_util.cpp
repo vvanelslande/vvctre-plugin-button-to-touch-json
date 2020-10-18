@@ -4,10 +4,11 @@
 
 #ifdef _WIN32
 
+#include <cstdint>
 #include <windows.h>
 #include "string_util.h"
 
-static std::wstring CPToUTF16(u32 code_page, const std::string& input) {
+static std::wstring CPToUTF16(std::uint32_t code_page, const std::string& input) {
     const auto size =
         MultiByteToWideChar(code_page, 0, input.data(), static_cast<int>(input.size()), nullptr, 0);
 
