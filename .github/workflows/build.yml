@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    tags:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [windows-2019, ubuntu-18.04]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Build
+        shell: bash
+        run: |
+          cd $GITHUB_WORKSPACE
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            cl.exe //LD //Fe:button-to-touch-json.dll plugin.cpp
+          else
+            g++ plugin.cpp -shared -o button-to-touch-json.so -fPIC
+          fi
+      - name: Prepare to upload
+        if: github.event_name == 'push'
+        shell: bash
+        run: |
+          cd $GITHUB_WORKSPACE
+          export VERSION=${GITHUB_REF:10}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            7z a vvctre-plugin-button-to-touch-json-$VERSION-${{runner.os}}.7z button-to-touch-json.dll license.txt button-to-touch.json
+          else
+            7z a vvctre-plugin-button-to-touch-json-$VERSION-${{runner.os}}.7z button-to-touch-json.so license.txt button-to-touch.json
+          fi
+      - name: Upload to GitHub Releases
+        if: github.event_name == 'push'
+        uses: svenstaro/upload-release-action@v1-release
+        with:
+          repo_token: ${{secrets.GITHUB_TOKEN}}
+          file: vvctre-plugin-button-to-touch-json-${{env.VERSION}}-${{runner.os}}.7z
+          asset_name: vvctre-plugin-button-to-touch-json-${{env.VERSION}}-${{runner.os}}.7z
+          tag: ${{github.ref}}
+          overwrite: true
+      - name: Upload artifact
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v1
+        with:
+          name: vvctre-plugin-button-to-touch-json-${{runner.os}}
+          path: .

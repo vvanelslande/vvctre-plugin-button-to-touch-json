@@ -1,0 +1,7 @@
+[submodule "json"]
+path = json
+url = https://github.com/nlohmann/json.git
+
+[submodule "whereami"]
+path = whereami
+url = https://github.com/gpakosz/whereami.git
