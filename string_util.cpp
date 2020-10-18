@@ -5,6 +5,7 @@
 #ifdef _WIN32
 
 #include <windows.h>
+#include "string_util.h"
 
 static std::wstring CPToUTF16(u32 code_page, const std::string& input) {
     const auto size =
