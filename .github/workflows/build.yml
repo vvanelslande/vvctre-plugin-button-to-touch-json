@@ -38,8 +38,10 @@ jobs:
           export VERSION=${GITHUB_REF:10}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           if [ "$RUNNER_OS" == "Windows" ]; then
+            mv ./build/bin/Release/button-to-touch-json.dll .
             7z a vvctre-plugin-button-to-touch-json-$VERSION-${{runner.os}}.7z button-to-touch-json.dll license.txt button-to-touch.json
           else
+            mv ./build/bin/Release/button-to-touch-json.so .
             7z a vvctre-plugin-button-to-touch-json-$VERSION-${{runner.os}}.7z button-to-touch-json.so license.txt button-to-touch.json
           fi
       - name: Upload to GitHub Releases
