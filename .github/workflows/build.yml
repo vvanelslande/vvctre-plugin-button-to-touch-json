@@ -46,6 +46,7 @@ jobs:
             cp ./build/bin/Release/button-to-touch-json.so artifact/
           fi
           cp license.txt artifact/
+          cp button-to-touch.json artifact/
       - name: Upload artifact
         uses: actions/upload-artifact@v1
         with:
