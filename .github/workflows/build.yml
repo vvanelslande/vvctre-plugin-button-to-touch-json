@@ -58,6 +58,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/download-artifact@v2
+      - id: tag
+        uses: dawidd6/action-get-tag@v1.0.0
+      - uses: rlespinasse/git-commit-data-action@1.1.0
       - name: Create .7z and .zip files
         run: |
           cd windows
