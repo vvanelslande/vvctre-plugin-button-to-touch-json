@@ -1,12 +1,5 @@
-name: CI
-
-on:
-  push:
-    tags:
-      - '*'
-  pull_request:
-    branches:
-      - '*'
+name: Build
+on: [push, pull_request]
 
 jobs:
   build:
@@ -51,68 +44,3 @@ jobs:
         with:
           name: ${{matrix.name}}
           path: artifact
-  release:
-    if: github.event_name == 'push'
-    needs: build
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/download-artifact@v2
-      - id: tag
-        uses: dawidd6/action-get-tag@v1.0.0
-      - uses: rlespinasse/git-commit-data-action@1.1.0
-      - name: Create .7z and .zip files
-        run: |
-          cd windows
-          7z a vvctre-plugin-button-to-touch-json-${{steps.tag.outputs.tag}}-windows.7z button-to-touch-json.dll license.txt button-to-touch.json
-          7z a vvctre-plugin-button-to-touch-json-${{steps.tag.outputs.tag}}-windows.zip button-to-touch-json.dll license.txt button-to-touch.json
-
-          cd ../linux
-          7z a vvctre-plugin-button-to-touch-json-${{steps.tag.outputs.tag}}-linux.7z button-to-touch-json.so license.txt button-to-touch.json
-          7z a vvctre-plugin-button-to-touch-json-${{steps.tag.outputs.tag}}-linux.zip button-to-touch-json.so license.txt button-to-touch.json
-      - id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        with:
-          tag_name: ${{github.ref}}
-          release_name: ${{steps.tag.outputs.tag}}
-          body: ${{env.GIT_COMMIT_MESSAGE_BODY}}
-          draft: false
-          prerelease: false
-      - name: Upload Windows 7z
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        with:
-          upload_url: ${{steps.create_release.outputs.upload_url}}
-          asset_path: ./windows/vvctre-plugin-button-to-touch-json-${{steps.tag.outputs.tag}}-windows.7z
-          asset_name: vvctre-plugin-button-to-touch-json-${{steps.tag.outputs.tag}}-windows.7z
-          asset_content_type: application/x-7z-compressed
-      - name: Upload Windows zip
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        with:
-          upload_url: ${{steps.create_release.outputs.upload_url}}
-          asset_path: ./windows/vvctre-plugin-button-to-touch-json-${{steps.tag.outputs.tag}}-windows.zip
-          asset_name: vvctre-plugin-button-to-touch-json-${{steps.tag.outputs.tag}}-windows.zip
-          asset_content_type: application/zip
-      - name: Upload Linux 7z
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        with:
-          upload_url: ${{steps.create_release.outputs.upload_url}}
-          asset_path: ./linux/vvctre-plugin-button-to-touch-json-${{steps.tag.outputs.tag}}-linux.7z
-          asset_name: vvctre-plugin-button-to-touch-json-${{steps.tag.outputs.tag}}-linux.7z
-          asset_content_type: application/x-7z-compressed
-      - name: Upload Linux zip
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        with:
-          upload_url: ${{steps.create_release.outputs.upload_url}}
-          asset_path: ./linux/vvctre-plugin-button-to-touch-json-${{steps.tag.outputs.tag}}-linux.zip
-          asset_name: vvctre-plugin-button-to-touch-json-${{steps.tag.outputs.tag}}-linux.zip
-          asset_content_type: application/zip
