@@ -21,4 +21,4 @@ add_subdirectory(json EXCLUDE_FROM_ALL)
 add_library(vvctre-plugin-button-to-touch-json SHARED plugin.cpp string_util.cpp string_util.h)
 target_link_libraries(vvctre-plugin-button-to-touch-json PRIVATE whereami nlohmann_json)
 
-set_target_properties(vvctre-plugin-button-to-touch-json PROPERTIES PREFIX "" OUTPUT_NAME "button-to-touch-json")
+set_target_properties(vvctre-plugin-button-to-touch-json PROPERTIES PREFIX "" OUTPUT_NAME button-to-touch-json)
